@@ -1,7 +1,8 @@
-package com.example.livescoredemo
+package com.example.ui.landing
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.example.livescoredemo.R
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -9,3 +10,4 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
     }
 }
+
