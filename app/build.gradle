@@ -22,6 +22,13 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            buildConfigField("String", "LIVE_SCORE_BASE_URL", "\"https://v3.football.api-sports.io/\"")
+            buildConfigField("String", "LIVE_SCORE_API_KEY", "\"c383ed94396320cdc89d9ef32b560e15\"")
+        }
+
+        debug {
+            buildConfigField("String", "LIVE_SCORE_BASE_URL", "\"https://v3.football.api-sports.io/\"")
+            buildConfigField("String", "LIVE_SCORE_API_KEY", "\"c383ed94396320cdc89d9ef32b560e15\"")
         }
     }
     compileOptions {
@@ -84,6 +91,8 @@ dependencies {
     implementation "io.reactivex.rxjava2:rxandroid:2.1.1"
     implementation "io.reactivex.rxjava2:rxkotlin:2.3.0"
     implementation 'androidx.lifecycle:lifecycle-reactivestreams:2.4.1'
+    implementation "com.squareup.retrofit2:adapter-rxjava2:2.6.1"
+
 
 }
 kapt {
