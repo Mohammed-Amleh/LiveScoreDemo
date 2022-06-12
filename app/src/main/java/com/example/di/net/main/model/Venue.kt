@@ -3,8 +3,8 @@ package com.example.di.net.main.model
 
 import com.google.gson.annotations.SerializedName
 
-data class Status(
-    val elapsed: Int?,
-    val long: String?,
-    val short: String?
+data class Venue(
+    val city: String?,
+    val id: Int?,
+    val name: String?
 )
