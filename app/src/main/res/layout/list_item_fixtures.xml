@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+
+        <variable
+            name="team"
+            type="com.example.ui.model.LeagueFixturesItem.Body" />
+    </data>
+
+    <LinearLayout xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/league_logo_image_view"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_alignTop="@id/fixture_name_text_view"
+                android:layout_alignBottom="@id/fixture_name_text_view"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:src="@drawable/ic_baseline_calendar_month_24" />
+
+            <TextView
+                android:id="@+id/fixture_name_text_view"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_toStartOf="@+id/score_text_view"
+                android:layout_toEndOf="@+id/league_logo_image_view"
+                android:text="@{team.homeTeam.name}"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                tools:text="palestine" />
+
+            <TextView
+                android:id="@+id/score_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@id/fixture_name_text_view"
+                android:layout_alignBottom="@id/fixture_name_text_view"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="3dp"
+                android:gravity="center"
+                android:text="@{String.valueOf(safeUnbox(team.goals.home))}"
+                android:textSize="16sp"
+                tools:text="2" />
+        </RelativeLayout>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="5dp" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/league_logo_image_view2"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_alignTop="@id/fixture_name_text_view2"
+                android:layout_alignBottom="@id/fixture_name_text_view2"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:src="@drawable/ic_baseline_calendar_month_24" />
+
+            <TextView
+                android:id="@+id/fixture_name_text_view2"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_toStartOf="@+id/score_text_view2"
+                android:layout_toEndOf="@+id/league_logo_image_view2"
+                android:text="@{team.awayTeam.name}"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                tools:text="USA" />
+
+            <TextView
+                android:id="@+id/score_text_view2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@id/fixture_name_text_view2"
+                android:layout_alignBottom="@id/fixture_name_text_view2"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="3dp"
+                android:gravity="center"
+                android:text="@{String.valueOf(safeUnbox(team.goals.away))}"
+                android:textSize="16sp"
+                tools:text="1" />
+        </RelativeLayout>
+    </LinearLayout>
+</layout>

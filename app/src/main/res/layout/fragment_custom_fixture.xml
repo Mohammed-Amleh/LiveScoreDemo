@@ -1,0 +1,69 @@
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <RelativeLayout
+        android:id="@+id/parentRelative"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:saveEnabled="false"
+        tools:context="com.example.ui.home.CustomFixtureFragment">
+
+        <TextView
+            android:id="@+id/current_date_text_view"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/default_tab_layout_height"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_toStartOf="@+id/calendar_image_view"
+            android:fontFamily="sans-serif"
+            android:gravity="center"
+            android:textAppearance="@style/TextAppearance.AppCompat.Title"
+            android:textColor="@color/gray_aa"
+            android:text="selected Date" />
+
+        <ImageView
+            android:id="@+id/calendar_image_view"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/default_tab_layout_height"
+            android:layout_alignTop="@+id/current_date_text_view"
+            android:layout_alignBottom="@+id/current_date_text_view"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:clickable="true"
+            android:focusable="true"
+            android:paddingStart="5dp"
+            android:paddingEnd="5dp"
+            android:src="@drawable/ic_baseline_calendar_month_24" />
+
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/fixtures_recycler_view"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/calendar_image_view"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:background="@color/gray_0F"
+            android:saveEnabled="false"
+            android:tag="1" />
+
+        <FrameLayout
+            android:id="@+id/calendar_view_layout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/calendar_image_view"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:background="@color/white"
+            android:visibility="gone">
+
+            <CalendarView
+                android:id="@+id/calendar_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </FrameLayout>
+
+    </RelativeLayout>
+</layout>

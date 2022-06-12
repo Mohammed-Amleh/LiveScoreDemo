@@ -42,11 +42,11 @@ object NetworkModule {
             .readTimeout(time, TimeUnit.SECONDS)
             .writeTimeout(time, TimeUnit.SECONDS)
             .connectTimeout(time, TimeUnit.SECONDS)
-            .addInterceptor(HttpLoggingInterceptor().apply {
+            .addNetworkInterceptor(HttpLoggingInterceptor().apply {
                 level =
                     HttpLoggingInterceptor.Level.BODY
             })
-            .addInterceptor(headerInterceptor)
+            .addNetworkInterceptor(headerInterceptor)
             .build()
     }
 
