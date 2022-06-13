@@ -7,7 +7,7 @@ data class League(
     val country: String,
 
     @SerializedName("flag")
-    val flag: String,
+    val flag: String?,
 
     @SerializedName("id")
     val id: Int,

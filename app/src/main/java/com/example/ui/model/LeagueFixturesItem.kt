@@ -12,18 +12,20 @@ sealed class LeagueFixturesItem : Parcelable {
     @Parcelize
     data class Header(
         val leagueId: Int,
-        val leagueFlag: String,
+        val leagueFlag: String?,
         val leagueName: String,
         val leagueLogo: String,
         val leagueSeason: String
-    )  :LeagueFixturesItem()
+    ) : LeagueFixturesItem()
 
     @Parcelize
     data class Body(
         val awayTeam: Away,
         val homeTeam: Home,
         val goals: Goals
-    ) : LeagueFixturesItem()
+    ) : LeagueFixturesItem() {
+        val isMatchStarted get() = goals.away != null && goals.home != null
+    }
 
     companion object {
         fun createHeader(league: League): Header {

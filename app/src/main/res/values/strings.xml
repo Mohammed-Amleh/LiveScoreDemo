@@ -4,4 +4,7 @@
     <string name="today">Today</string>
     <string name="tomorrow">tomorrow</string>
     <string name="live">Live</string>
+    <string name="choose_date">choose Date</string>
+    <string name="wait_please">Wait Please...</string>
+    <string name="not_started_yet">Not Started yet</string>
 </resources>

@@ -3,6 +3,9 @@ package com.example.ui.home
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.di.net.NetworkResult
+import com.example.di.net.main.ApiExecutor
 import com.example.di.net.main.model.Away
 import com.example.di.net.main.model.Extratime
 import com.example.di.net.main.model.Fixture
@@ -22,31 +25,133 @@ import com.example.ui.home.adapter.PageType
 import com.example.ui.model.FixtureItem
 import com.example.ui.model.LeagueFixturesItem
 import com.example.utils.DateUtils
+import com.example.utils.Event
 import com.example.utils.asString
+import com.example.utils.extensions.toDate
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class HomeViewModel @Inject constructor() : ViewModel() {
+class HomeViewModel @Inject constructor(
+    private val apiExecutor: ApiExecutor
+) : ViewModel() {
 
     private val _fixturesLiveData = MutableLiveData<List<FixtureItem>>()
-    val fixturesLiveData: LiveData<List<FixtureItem>> = _fixturesLiveData
+    val fixturesLiveData: LiveData<List<FixtureItem>> get() = _fixturesLiveData
+
+    private val _customFixturesLiveData = MutableLiveData<List<LeagueFixturesItem>>()
+    val customFixturesLiveData: LiveData<List<LeagueFixturesItem>> get() = _customFixturesLiveData
+
+    private val _loadingLiveData = MutableLiveData<Boolean>()
+    val loadingLiveData: LiveData<Boolean> get() = _loadingLiveData
+
+    private val _errorLiveData = MutableLiveData<Event<Throwable>>()
+    val errorLiveData: LiveData<Event<Throwable>> get() = _errorLiveData
 
     init {
-        _fixturesLiveData.value = build(mock())
+        getFixtures()
+    }
+
+    fun getFixturesByDate(date: String) {
+        showLoading()
+        executeLunch {
+            val fixturesResponse = apiExecutor.getFixturesByDate(date)
+
+            when (fixturesResponse) {
+                is NetworkResult.ApiSuccess -> {
+                    val fixturesItems = buildFixturesItems(fixturesResponse.data.response)
+
+                    val data = mutableListOf<LeagueFixturesItem>()
+
+                    fixturesItems.forEach { item -> data.addAll(item.data) }
+
+                    _customFixturesLiveData.value = data
+                    hideLoading()
+                }
+                is NetworkResult.ApiError -> {
+                    _errorLiveData.value = Event(Throwable(fixturesResponse.e))
+                    hideLoading()
+                }
+            }
+        }
     }
 
     private fun getFixtures() {
-        //TODO
+        showLoading()
+        executeLunch {
+            val todayRequest = async { apiExecutor.getFixturesByDate(DateUtils.getTodayDate().asString()) }
+            val yesterdayRequest = async { apiExecutor.getFixturesByDate(DateUtils.getYesterdayDate().asString()) }
+            val tomorrowRequest = async { apiExecutor.getFixturesByDate(DateUtils.getTomorrowDate().asString()) }
+
+            val responsesResult = listOf(todayRequest, yesterdayRequest, tomorrowRequest).awaitAll()
+
+            val result = mutableListOf<FixtureResponse>()
+
+            responsesResult.forEach {
+                when (it) {
+                    is NetworkResult.ApiSuccess -> {
+                        result.addAll(it.data.response)
+                    }
+                    is NetworkResult.ApiError -> {
+                        _errorLiveData.value = Event(Throwable(it.e))
+                        hideLoading()
+                        return@executeLunch
+                    }
+                }
+            }
+            _fixturesLiveData.value = buildFixturesItems(result)
+            hideLoading()
+        }
     }
 
+    private fun buildFixturesItems(fixturesResponse: List<FixtureResponse>): List<FixtureItem> {
 
-    fun getFixturesByDate(date: String) {
-        //TODO
+        val fixturesResponseByLeagueDate = fixturesResponse.groupBy { Pair(it.league, it.fixture.date) }
+
+        return fixturesResponseByLeagueDate.keys.map { (league, date) ->
+
+            val formattedDate = date.toDate()?.asString()
+
+            val pageType = when (formattedDate) {
+                DateUtils.getYesterdayDate().asString() -> {
+                    PageType.YESTERDAY
+                }
+                DateUtils.getTodayDate().asString() -> {
+                    PageType.TODAY
+                }
+                DateUtils.getTomorrowDate().asString() -> {
+                    PageType.TOMORROW
+                }
+                else -> {
+                    PageType.CUSTOM
+                }
+            }
+
+            val items = mutableListOf<LeagueFixturesItem>()
+
+            val header = LeagueFixturesItem.createHeader(league)
+            items.add(header)
+
+            val body = fixturesResponseByLeagueDate[Pair(league, date)]!!.map(LeagueFixturesItem::createBody)
+            items.addAll(body)
+
+            FixtureItem(pageType, items)
+        }
     }
 
+    private fun showLoading() {
+        _loadingLiveData.value = true
+    }
 
-    //Test Data
+    private fun hideLoading() {
+        _loadingLiveData.value = false
+    }
+
+    //Test Data //because server has limited requests
     private fun mock(): List<FixtureResponse> {
         val league = League("brazil", "", 1, "logog", "Peremier Leuage", "dsa", 2022)
         val league2 = League("USA", "", 2, "logog", "USA Leuage", "dsa", 2022)
@@ -100,36 +205,10 @@ class HomeViewModel @Inject constructor() : ViewModel() {
         return listOf(fixtureResponse2, fixtureResponse3, fixRes, dsa, dsd2)
     }
 
-    fun build(fixturesResponse: List<FixtureResponse>): List<FixtureItem> {
-
-        val fixturesResponseByLeagueDate = fixturesResponse.groupBy { Pair(it.league, it.fixture.date) }
-
-        return fixturesResponseByLeagueDate.keys.map { (league, date) ->
-
-            val pageType = when (date) {
-                DateUtils.getYesterdayDate().asString() -> {
-                    PageType.YESTERDAY
-                }
-                DateUtils.getTodayDate().asString() -> {
-                    PageType.TODAY
-                }
-                DateUtils.getTomorrowDate().asString() -> {
-                    PageType.TOMORROW
-                }
-                else -> {
-                    PageType.CUSTOM
-                }
-            }
-
-            val items = mutableListOf<LeagueFixturesItem>()
-
-            val header = LeagueFixturesItem.createHeader(league)
-            items.add(header)
-
-            val body = fixturesResponseByLeagueDate[Pair(league, date)]!!.map(LeagueFixturesItem::createBody)
-            items.addAll(body)
-
-            FixtureItem(pageType, items)
+    private fun executeLunch(callback: suspend CoroutineScope.() -> Unit) {
+        viewModelScope.launch {
+            callback.invoke(this)
         }
     }
 }
+

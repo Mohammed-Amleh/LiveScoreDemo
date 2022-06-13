@@ -8,8 +8,11 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.activityViewModels
+import androidx.recyclerview.widget.DividerItemDecoration
 import com.example.livescoredemo.R
 import com.example.livescoredemo.databinding.FragmentCustomFixtureBinding
+import com.example.ui.home.adapter.LeagueFixturesAdapter
 import com.example.utils.asString
 import com.example.utils.extensions.toDate
 import dagger.hilt.android.AndroidEntryPoint
@@ -19,12 +22,16 @@ class CustomFixtureFragment : Fragment() {
 
     lateinit var binding: FragmentCustomFixtureBinding
 
+    private lateinit var adapter: LeagueFixturesAdapter
+
+    private val viewModel by activityViewModels<HomeViewModel>()
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         binding = DataBindingUtil.inflate(
-            layoutInflater,
+            inflater,
             R.layout.fragment_custom_fixture,
             container,
             false
@@ -36,6 +43,12 @@ class CustomFixtureFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         initViews()
+        initAdapter()
+        initRecyclerView()
+
+        viewModel.customFixturesLiveData.observe(viewLifecycleOwner) {
+            adapter.submitList(it)
+        }
     }
 
     private fun initViews() {
@@ -60,6 +73,8 @@ class CustomFixtureFragment : Fragment() {
 
                 date?.let { currentDate ->
                     binding.currentDateTextView.text = currentDate
+                    viewModel.getFixturesByDate(currentDate)
+                    hideCalendarView()
                 }
             }
         }
@@ -68,6 +83,17 @@ class CustomFixtureFragment : Fragment() {
     private fun hideCalendarView() {
         binding.calendarViewLayout.isVisible = false
         binding.calendarImageView.setColorFilter(ContextCompat.getColor(requireContext(), R.color.purple_500))
+    }
+
+    private fun initRecyclerView() {
+        binding.fixturesRecyclerView.apply {
+            adapter = this@CustomFixtureFragment.adapter
+            addItemDecoration(DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL))
+        }
+    }
+
+    private fun initAdapter() {
+        adapter = LeagueFixturesAdapter()
     }
 
     private fun showCalendarView() {

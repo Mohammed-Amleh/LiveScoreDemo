@@ -11,6 +11,8 @@ import com.example.livescoredemo.databinding.ActivityHomeBinding
 import com.example.ui.home.adapter.PageType
 import com.example.ui.home.adapter.FixturesViewPagerAdapter
 import com.example.ui.model.FixtureItem
+import com.example.utils.extensions.showErrorSnackBar
+import com.example.utils.observeEventNotNull
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
@@ -60,6 +62,14 @@ class HomeActivity : AppCompatActivity() {
              * [TabLayoutMediator.attach()] must called after view pager has an adapter
              * */
             initTabLayoutMediator().attach()
+        }
+
+        viewModel.loadingLiveData.observe(this) {
+            binding.progressBar.isVisible = it
+        }
+
+        viewModel.errorLiveData.observeEventNotNull(this) {
+            showErrorSnackBar(binding.viewpager, it)
         }
     }
 

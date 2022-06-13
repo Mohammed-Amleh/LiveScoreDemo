@@ -2,6 +2,7 @@ package com.example.ui.home.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -70,8 +71,7 @@ internal class LeagueFixturesHeaderViewHolder(private val binding: ListItemFixtu
     RecyclerView.ViewHolder(binding.root) {
 
     fun bind(item: LeagueFixturesItem.Header) {
-        binding.leagueNameTextView.text = item.leagueName
-        //TODO load glide
+        binding.header = item
     }
 }
 
@@ -80,6 +80,6 @@ internal class LeagueFixturesBodyViewHolder(private val binding: ListItemFixture
 
     fun bind(item: LeagueFixturesItem.Body) {
         binding.team = item
-        //TODO load glide
+        binding.notStartedFixtureTextView.isVisible = !item.isMatchStarted
     }
 }

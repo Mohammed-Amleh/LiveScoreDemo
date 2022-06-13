@@ -1,4 +1,5 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <RelativeLayout
@@ -6,7 +7,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/white"
-        android:saveEnabled="false"
         tools:context="com.example.ui.home.CustomFixtureFragment">
 
         <TextView
@@ -18,9 +18,9 @@
             android:layout_toStartOf="@+id/calendar_image_view"
             android:fontFamily="sans-serif"
             android:gravity="center"
+            android:text="@string/choose_date"
             android:textAppearance="@style/TextAppearance.AppCompat.Title"
-            android:textColor="@color/gray_aa"
-            android:text="selected Date" />
+            android:textColor="@color/gray_aa" />
 
         <ImageView
             android:id="@+id/calendar_image_view"
@@ -36,7 +36,6 @@
             android:paddingEnd="5dp"
             android:src="@drawable/ic_baseline_calendar_month_24" />
 
-
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/fixtures_recycler_view"
             android:layout_width="0dp"
@@ -46,8 +45,7 @@
             android:layout_alignParentEnd="true"
             android:layout_alignParentBottom="true"
             android:background="@color/gray_0F"
-            android:saveEnabled="false"
-            android:tag="1" />
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
         <FrameLayout
             android:id="@+id/calendar_view_layout"
