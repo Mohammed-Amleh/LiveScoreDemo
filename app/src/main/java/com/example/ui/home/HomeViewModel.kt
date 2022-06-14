@@ -6,21 +6,21 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.di.net.NetworkResult
 import com.example.di.net.main.ApiExecutor
-import com.example.di.net.main.model.Away
-import com.example.di.net.main.model.Extratime
-import com.example.di.net.main.model.Fixture
-import com.example.di.net.main.model.FixtureResponse
-import com.example.di.net.main.model.Fulltime
-import com.example.di.net.main.model.Goals
-import com.example.di.net.main.model.Halftime
-import com.example.di.net.main.model.Home
-import com.example.di.net.main.model.League
-import com.example.di.net.main.model.Penalty
-import com.example.di.net.main.model.Periods
-import com.example.di.net.main.model.Score
-import com.example.di.net.main.model.Status
-import com.example.di.net.main.model.Teams
-import com.example.di.net.main.model.Venue
+import com.example.di.net.main.model.fixture.Away
+import com.example.di.net.main.model.fixture.Extratime
+import com.example.di.net.main.model.fixture.Fixture
+import com.example.di.net.main.model.fixture.FixtureResponse
+import com.example.di.net.main.model.fixture.Fulltime
+import com.example.di.net.main.model.fixture.Goals
+import com.example.di.net.main.model.fixture.Halftime
+import com.example.di.net.main.model.fixture.Home
+import com.example.di.net.main.model.fixture.League
+import com.example.di.net.main.model.fixture.Penalty
+import com.example.di.net.main.model.fixture.Periods
+import com.example.di.net.main.model.fixture.Score
+import com.example.di.net.main.model.fixture.Status
+import com.example.di.net.main.model.fixture.StatusType
+import com.example.di.net.main.model.fixture.Teams
 import com.example.ui.home.adapter.PageType
 import com.example.ui.model.FixtureItem
 import com.example.ui.model.LeagueFixturesItem
@@ -46,7 +46,7 @@ class HomeViewModel @Inject constructor(
     private val _customFixturesLiveData = MutableLiveData<List<LeagueFixturesItem>>()
     val customFixturesLiveData: LiveData<List<LeagueFixturesItem>> get() = _customFixturesLiveData
 
-    private val _loadingLiveData = MutableLiveData<Boolean>()
+    private val _loadingLiveData = MutableLiveData<Boolean>(false)
     val loadingLiveData: LiveData<Boolean> get() = _loadingLiveData
 
     private val _errorLiveData = MutableLiveData<Event<Throwable>>()
@@ -162,30 +162,27 @@ class HomeViewModel @Inject constructor(
             1,
             Periods(1, 2),
             "dsa",
-            Status(1, "das", "jh"),
+            Status(1,  StatusType.LIVE),
             321,
             "sasa",
-            Venue("dasd", 5, "name")
         )
         val fixture2 = Fixture(
             DateUtils.getTodayDate().asString(),
             1,
             Periods(1, 2),
             "dsa",
-            Status(1, "das", "jh"),
+            Status(1,  StatusType.H1),
             123321,
             "sasa",
-            Venue("dasd", 5, "name")
         )
         val fixture3 = Fixture(
             DateUtils.getTomorrowDate().asString(),
             1,
             Periods(1, 2),
             "dsa",
-            Status(1, "das", "jh"),
+            Status(1,  StatusType.BT),
             112323,
             "sasa",
-            Venue("dasd", 5, "name")
         )
 
         val goals = Goals(1, 2)

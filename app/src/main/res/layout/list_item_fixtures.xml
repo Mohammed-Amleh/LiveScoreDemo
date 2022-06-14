@@ -57,12 +57,13 @@
         </RelativeLayout>
 
 
-        <TextView
-            android:id="@+id/not_started_fixture_text_view"
-            android:layout_width="match_parent"
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/fixture_status_text_view"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:minWidth="5dp"
+            android:layout_gravity="center"
             android:text="@string/not_started_yet"
             android:textColor="@color/teal_700"
             android:textSize="18sp"

@@ -2,7 +2,8 @@ package com.example.di.net.main
 
 import com.example.di.net.NetworkResult
 import com.example.di.net.handleApiResponse
-import com.example.di.net.main.model.FixturesResponse
+import com.example.di.net.main.model.fixture.FixturesResponse
+import com.example.di.net.main.model.event.EventsResponse
 import javax.inject.Inject
 
 /**
@@ -18,12 +19,8 @@ class ApiExecutorImpl @Inject constructor(
         return handleApiResponse { apis.getFixturesByDate(date) }
     }
 
-    override suspend fun getFixturesBetweenTwoDate(
-        season: String,
-        fromDate: String,
-        toDate: String
-    ): NetworkResult<FixturesResponse> {
-        return handleApiResponse { apis.getFixturesBetweenTwoDate(season, fromDate, toDate) }
+    override suspend fun getFixtureEvent(fixtureId: Int): NetworkResult<EventsResponse> {
+        return handleApiResponse { apis.getFixtureEvents(fixtureId.toString()) }
     }
 }
 

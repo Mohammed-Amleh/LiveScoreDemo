@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import com.example.livescoredemo.R
 import com.example.livescoredemo.databinding.FragmentCustomFixtureBinding
 import com.example.ui.home.adapter.LeagueFixturesAdapter
+import com.example.ui.home.detail.FixtureDetailsActivity
 import com.example.utils.asString
 import com.example.utils.extensions.toDate
 import dagger.hilt.android.AndroidEntryPoint
@@ -93,7 +94,9 @@ class CustomFixtureFragment : Fragment() {
     }
 
     private fun initAdapter() {
-        adapter = LeagueFixturesAdapter()
+        adapter = LeagueFixturesAdapter {
+            startActivity(FixtureDetailsActivity.newIntent(requireContext(), it))
+        }
     }
 
     private fun showCalendarView() {
