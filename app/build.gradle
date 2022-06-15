@@ -24,12 +24,12 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             buildConfigField("String", "LIVE_SCORE_BASE_URL", "\"https://v3.football.api-sports.io/\"")
-            buildConfigField("String", "LIVE_SCORE_API_KEY", "\"c383ed94396320cdc89d9ef32b560e15\"")
+            buildConfigField("String", "LIVE_SCORE_API_KEY", "\"77ffc9670ef7db320d919c890364ecde\"")
         }
 
         debug {
             buildConfigField("String", "LIVE_SCORE_BASE_URL", "\"https://v3.football.api-sports.io/\"")
-            buildConfigField("String", "LIVE_SCORE_API_KEY", "\"c383ed94396320cdc89d9ef32b560e15\"")
+            buildConfigField("String", "LIVE_SCORE_API_KEY", "\"77ffc9670ef7db320d919c890364ecde\"")
         }
     }
     compileOptions {

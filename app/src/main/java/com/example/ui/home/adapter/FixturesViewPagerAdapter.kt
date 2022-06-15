@@ -32,15 +32,13 @@ class FixturesViewPagerAdapter(
             PageType.TOMORROW -> FixtureFragment.newInstance(data)
             PageType.CUSTOM -> CustomFixtureFragment.newInstance()
             else -> {
-                throw Throwable("unsupported page")
+                error("unsupported page")
             }
         }
     }
 
-
-    override fun getItemCount() = 5
+    override fun getItemCount() = PageType.values().count()
 }
-
 
 enum class PageType(val position: Int, @StringRes val title: Int?) {
     LIVE(0, R.string.live),

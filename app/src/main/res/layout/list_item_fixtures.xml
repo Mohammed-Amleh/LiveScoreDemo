@@ -27,7 +27,8 @@
                 android:layout_alignBottom="@id/fixture_name_text_view"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentTop="true"
-                android:src="@drawable/ic_baseline_calendar_month_24" />
+                android:src="@drawable/ic_baseline_calendar_month_24"
+                tools:ignore="ContentDescription" />
 
             <TextView
                 android:id="@+id/fixture_name_text_view"
@@ -61,13 +62,15 @@
             android:id="@+id/fixture_status_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:drawableStart="@{team.isMatchLive ? @drawable/ic_fire:null}"
+            android:drawableEnd="@{team.isMatchLive ? @drawable/ic_fire:null}"
             android:gravity="center"
             android:minWidth="5dp"
-            android:layout_gravity="center"
-            android:text="@string/not_started_yet"
             android:textColor="@color/teal_700"
             android:textSize="18sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            tools:text="@string/not_started" />
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -83,7 +86,8 @@
                 android:layout_alignBottom="@id/fixture_name_text_view2"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentTop="true"
-                android:src="@drawable/ic_baseline_calendar_month_24" />
+                android:src="@drawable/ic_baseline_calendar_month_24"
+                tools:ignore="ContentDescription" />
 
             <TextView
                 android:id="@+id/fixture_name_text_view2"

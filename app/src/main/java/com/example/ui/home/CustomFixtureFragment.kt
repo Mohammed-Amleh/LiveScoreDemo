@@ -69,10 +69,9 @@ class CustomFixtureFragment : Fragment() {
             }
 
             calendarView.setOnDateChangeListener { _, year, month, dayOfMonth ->
-                val date = ("${year}-${month}-${dayOfMonth}")
-                    .toDate()?.asString()
+                val date = requireContext().getString(R.string.default_format_date_pattern, year, month, dayOfMonth)
 
-                date?.let { currentDate ->
+                date.toDate()?.asString()?.let { currentDate ->
                     binding.currentDateTextView.text = currentDate
                     viewModel.getFixturesByDate(currentDate)
                     hideCalendarView()

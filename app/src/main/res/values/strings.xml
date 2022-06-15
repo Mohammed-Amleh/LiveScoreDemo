@@ -31,4 +31,5 @@
     <string name="score_label">%d-%d</string>
     <string name="elapsed_time_label">\'%d</string>
     <string name="empty_fixture_events_message">There\'s no events now…</string>
+    <string name="default_format_date_pattern">%d-%d-%d</string>
 </resources>

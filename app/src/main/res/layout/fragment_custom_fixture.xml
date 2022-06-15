@@ -34,7 +34,8 @@
             android:focusable="true"
             android:paddingStart="5dp"
             android:paddingEnd="5dp"
-            android:src="@drawable/ic_baseline_calendar_month_24" />
+            android:src="@drawable/ic_baseline_calendar_month_24"
+            tools:ignore="ContentDescription" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/fixtures_recycler_view"

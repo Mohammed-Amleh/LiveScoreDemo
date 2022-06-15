@@ -18,15 +18,13 @@ class FixtureDetailsViewModel @Inject constructor(
     private val apiExecutor: ApiExecutor
 ) : ViewModel() {
 
-    private lateinit var fixtureItem: LeagueFixturesItem.Body
-
     private val _headerDetailsLiveData = MutableLiveData<LeagueFixturesItem.Body>()
     val headerDetailsLiveData: LiveData<LeagueFixturesItem.Body> get() = _headerDetailsLiveData
 
     private val _fixtureEventsLiveData = MutableLiveData<List<FixtureEventItem>>()
     val fixtureEventsLiveData: LiveData<List<FixtureEventItem>> get() = _fixtureEventsLiveData
 
-    private val _loadingLiveData = MutableLiveData<Boolean>(false)
+    private val _loadingLiveData = MutableLiveData(false)
     val loadingLiveData: LiveData<Boolean> get() = _loadingLiveData
 
     private val _errorLiveData = MutableLiveData<Event<Throwable>>()
@@ -40,9 +38,8 @@ class FixtureDetailsViewModel @Inject constructor(
 
         when (leagueFixtureItem) {
             is LeagueFixturesItem.Body -> {
-                fixtureItem = leagueFixtureItem
                 _headerDetailsLiveData.value = leagueFixtureItem!!
-                getFixtureEvents()
+                getFixtureEvents(leagueFixtureItem)
             }
             is LeagueFixturesItem.Header -> {
                 /*** for future work* */
@@ -50,13 +47,11 @@ class FixtureDetailsViewModel @Inject constructor(
         }
     }
 
-    private fun getFixtureEvents() {
-        if (!::fixtureItem.isInitialized) return
+    private fun getFixtureEvents(fixtureItem: LeagueFixturesItem.Body) {
 
         showLoading()
         viewModelScope.launch {
-            val eventResponse = apiExecutor.getFixtureEvent(fixtureItem.fixture.id)
-            when (eventResponse) {
+            when (val eventResponse = apiExecutor.getFixtureEvent(fixtureItem.fixture.id)) {
                 is NetworkResult.ApiSuccess -> {
 
                     val eventList = eventResponse.data.response
@@ -71,7 +66,7 @@ class FixtureDetailsViewModel @Inject constructor(
                 }
 
                 is NetworkResult.ApiError -> {
-                    _errorLiveData.value = Event(eventResponse.e)
+                    _errorLiveData.value = Event(eventResponse.throwable)
                     hideLoading()
                 }
             }

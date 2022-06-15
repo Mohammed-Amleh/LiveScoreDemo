@@ -2,11 +2,9 @@ package com.example.ui.home.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.livescoredemo.R
 import com.example.livescoredemo.databinding.ListItemFixtureHeaderBinding
 import com.example.livescoredemo.databinding.ListItemFixturesBinding
 import com.example.ui.model.LeagueFixturesItem
@@ -93,11 +91,5 @@ internal class LeagueFixturesBodyViewHolder(private val binding: ListItemFixture
     fun bind(item: LeagueFixturesItem.Body) {
         binding.team = item
         binding.fixtureStatusTextView.text = itemView.context.getString(item.status.type.message)
-        if (item.isMatchLive) {
-            val drawable = ContextCompat.getDrawable(itemView.context, R.drawable.ic_fire)
-            binding.fixtureStatusTextView.setCompoundDrawablesWithIntrinsicBounds(drawable, null, drawable, null)
-        } else {
-            binding.fixtureStatusTextView.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null)
-        }
     }
 }

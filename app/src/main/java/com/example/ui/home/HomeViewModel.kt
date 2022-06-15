@@ -6,21 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.di.net.NetworkResult
 import com.example.di.net.main.ApiExecutor
-import com.example.di.net.main.model.fixture.Away
-import com.example.di.net.main.model.fixture.Extratime
-import com.example.di.net.main.model.fixture.Fixture
 import com.example.di.net.main.model.fixture.FixtureResponse
-import com.example.di.net.main.model.fixture.Fulltime
-import com.example.di.net.main.model.fixture.Goals
-import com.example.di.net.main.model.fixture.Halftime
-import com.example.di.net.main.model.fixture.Home
-import com.example.di.net.main.model.fixture.League
-import com.example.di.net.main.model.fixture.Penalty
-import com.example.di.net.main.model.fixture.Periods
-import com.example.di.net.main.model.fixture.Score
-import com.example.di.net.main.model.fixture.Status
-import com.example.di.net.main.model.fixture.StatusType
-import com.example.di.net.main.model.fixture.Teams
 import com.example.ui.home.adapter.PageType
 import com.example.ui.model.FixtureItem
 import com.example.ui.model.LeagueFixturesItem
@@ -31,7 +17,6 @@ import com.example.utils.extensions.toDate
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -73,7 +58,7 @@ class HomeViewModel @Inject constructor(
                     hideLoading()
                 }
                 is NetworkResult.ApiError -> {
-                    _errorLiveData.value = Event(Throwable(fixturesResponse.e))
+                    _errorLiveData.value = Event(fixturesResponse.throwable)
                     hideLoading()
                 }
             }
@@ -87,7 +72,9 @@ class HomeViewModel @Inject constructor(
             val yesterdayRequest = async { apiExecutor.getFixturesByDate(DateUtils.getYesterdayDate().asString()) }
             val tomorrowRequest = async { apiExecutor.getFixturesByDate(DateUtils.getTomorrowDate().asString()) }
 
-            val responsesResult = listOf(todayRequest, yesterdayRequest, tomorrowRequest).awaitAll()
+
+            //if one of request's fail it will not affect other's
+            val responsesResult = listOf(todayRequest, yesterdayRequest, tomorrowRequest).map { it.await() }
 
             val result = mutableListOf<FixtureResponse>()
 
@@ -97,9 +84,7 @@ class HomeViewModel @Inject constructor(
                         result.addAll(it.data.response)
                     }
                     is NetworkResult.ApiError -> {
-                        _errorLiveData.value = Event(Throwable(it.e))
-                        hideLoading()
-                        return@executeLunch
+                        _errorLiveData.value = Event(it.throwable)
                     }
                 }
             }
@@ -110,13 +95,13 @@ class HomeViewModel @Inject constructor(
 
     private fun buildFixturesItems(fixturesResponse: List<FixtureResponse>): List<FixtureItem> {
 
-        val fixturesResponseByLeagueDate = fixturesResponse.groupBy { Pair(it.league, it.fixture.date) }
+        val fixturesResponseByLeagueDate = fixturesResponse.groupBy {
+            Pair(it.league.id, it.fixture.date.toDate()!!.asString())
+        }
 
-        return fixturesResponseByLeagueDate.keys.map { (league, date) ->
+        return fixturesResponseByLeagueDate.keys.map { (leagueId, date) ->
 
-            val formattedDate = date.toDate()?.asString()
-
-            val pageType = when (formattedDate) {
+            val pageType = when (date) {
                 DateUtils.getYesterdayDate().asString() -> {
                     PageType.YESTERDAY
                 }
@@ -133,10 +118,13 @@ class HomeViewModel @Inject constructor(
 
             val items = mutableListOf<LeagueFixturesItem>()
 
-            val header = LeagueFixturesItem.createHeader(league)
+            val fixtureResponseList = fixturesResponseByLeagueDate[Pair(leagueId, date)]!!
+
+            val header =
+                LeagueFixturesItem.createHeader(fixtureResponseList.first().league)
             items.add(header)
 
-            val body = fixturesResponseByLeagueDate[Pair(league, date)]!!.map(LeagueFixturesItem::createBody)
+            val body = fixtureResponseList.map(LeagueFixturesItem::createBody)
             items.addAll(body)
 
             FixtureItem(pageType, items)
@@ -149,57 +137,6 @@ class HomeViewModel @Inject constructor(
 
     private fun hideLoading() {
         _loadingLiveData.value = false
-    }
-
-    //Test Data //because server has limited requests
-    private fun mock(): List<FixtureResponse> {
-        val league = League("brazil", "", 1, "logog", "Peremier Leuage", "dsa", 2022)
-        val league2 = League("USA", "", 2, "logog", "USA Leuage", "dsa", 2022)
-        val league3 = League("China", "", 3, "logog", "China Leuage", "dsad", 2022)
-
-        val fixture = Fixture(
-            DateUtils.getYesterdayDate().asString(),
-            1,
-            Periods(1, 2),
-            "dsa",
-            Status(1,  StatusType.LIVE),
-            321,
-            "sasa",
-        )
-        val fixture2 = Fixture(
-            DateUtils.getTodayDate().asString(),
-            1,
-            Periods(1, 2),
-            "dsa",
-            Status(1,  StatusType.H1),
-            123321,
-            "sasa",
-        )
-        val fixture3 = Fixture(
-            DateUtils.getTomorrowDate().asString(),
-            1,
-            Periods(1, 2),
-            "dsa",
-            Status(1,  StatusType.BT),
-            112323,
-            "sasa",
-        )
-
-        val goals = Goals(1, 2)
-        val score = Score(Extratime(1, 2), Fulltime(10, 20), Halftime(25, 34), Penalty(1, null))
-        val Teams = Teams(
-            Away(1, "lgog", "USA", true), Home(2, "logo", "chinda", false)
-        )
-        val Teams2 = Teams(
-            Away(2, "lgog", "Palestine", true), Home(2, "logo", "Canada", false)
-        )
-        val fixtureResponse2 = FixtureResponse(fixture, Goals(1, 5), league, score, Teams)
-        val fixtureResponse3 = FixtureResponse(fixture, Goals(4, 5), league2, score, Teams)
-        val fixRes = FixtureResponse(fixture, goals, league, score, Teams2)
-        val dsd2 = FixtureResponse(fixture2, goals, league2, score, Teams)
-        val dsa = FixtureResponse(fixture3, goals, league, score, Teams2)
-
-        return listOf(fixtureResponse2, fixtureResponse3, fixRes, dsa, dsd2)
     }
 
     private fun executeLunch(callback: suspend CoroutineScope.() -> Unit) {

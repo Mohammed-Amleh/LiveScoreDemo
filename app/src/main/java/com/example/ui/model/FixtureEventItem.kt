@@ -8,7 +8,7 @@ data class FixtureEventItem(
     val teamHomeId: Int,
     val teamAwayId: Int,
     val teamEventId: Int,
-    val eventType:String,
+    val eventType: String,
 ) {
     val isHomeTeam get() = teamEventId == teamHomeId
 
