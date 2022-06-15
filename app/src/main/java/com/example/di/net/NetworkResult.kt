@@ -9,7 +9,7 @@ import timber.log.Timber
 
 sealed class NetworkResult<T : Any> {
     class ApiSuccess<T : Any>(val data: T) : NetworkResult<T>()
-    class ApiError<T : Any>(val e: Throwable) : NetworkResult<T>()
+    class ApiError<T : Any>(val throwable: Throwable) : NetworkResult<T>()
 }
 
 suspend fun <T : Any> handleApiResponse(

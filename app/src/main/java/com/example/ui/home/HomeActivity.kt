@@ -80,7 +80,6 @@ class HomeActivity : AppCompatActivity() {
             currentItem = PageType.TODAY.position
             offscreenPageLimit = 5
         }
-
     }
 
     private fun initTabLayoutMediator(): TabLayoutMediator {

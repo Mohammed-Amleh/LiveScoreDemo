@@ -26,7 +26,7 @@ class FixtureDetailsActivity : AppCompatActivity() {
 
     private val viewModel by viewModels<FixtureDetailsViewModel>()
 
-    lateinit var adapter: FixtureEventsAdapter
+    private lateinit var adapter: FixtureEventsAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

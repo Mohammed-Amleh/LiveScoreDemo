@@ -38,15 +38,6 @@ class FixtureEventsViewHolder(val binding: ListItemFixtureEventBinding) :
     ViewHolder(binding.root) {
 
     fun bind(item: FixtureEventItem) {
-        binding.elapsedTimeTextView.text =
-            itemView.context.getString(R.string.elapsed_time_label, item.elapsedTime)
-        if (item.isHomeTeam) {
-            binding.playerHomeTeamTextView.text = item.playerName
-            binding.playerAwayTeamTextView.isInvisible = true
-        } else {
-            binding.playerAwayTeamTextView.text = item.playerName
-            binding.playerHomeTeamTextView.isInvisible = true
-        }
-        binding.fixtureEventTypeTextView.text = item.eventType
+        binding.event = item
     }
 }

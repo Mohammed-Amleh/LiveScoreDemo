@@ -93,11 +93,5 @@ internal class LeagueFixturesBodyViewHolder(private val binding: ListItemFixture
     fun bind(item: LeagueFixturesItem.Body) {
         binding.team = item
         binding.fixtureStatusTextView.text = itemView.context.getString(item.status.type.message)
-        if (item.isMatchLive) {
-            val drawable = ContextCompat.getDrawable(itemView.context, R.drawable.ic_fire)
-            binding.fixtureStatusTextView.setCompoundDrawablesWithIntrinsicBounds(drawable, null, drawable, null)
-        } else {
-            binding.fixtureStatusTextView.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null)
-        }
     }
 }

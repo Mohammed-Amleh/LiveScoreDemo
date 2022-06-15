@@ -3,6 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <data>
+
+        <variable
+            name="event"
+            type="com.example.ui.model.FixtureEventItem" />
+    </data>
+
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -19,15 +26,17 @@
                 android:id="@+id/elapsed_time_text_view"
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
+                android:text="@{@string/elapsed_time_label(event.elapsedTime)}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:text="'21" />
+                tools:text="@string/elapsed_time_label" />
 
             <TextView
                 android:id="@+id/fixture_event_type_text_view"
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
+                android:text="@{event.eventType}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -44,6 +53,7 @@
                 android:gravity="center"
                 android:maxWidth="100dp"
                 android:singleLine="true"
+                android:text="@{event.isHomeTeam ? null : event.playerName}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/fixture_event_type_text_view"
@@ -60,6 +70,7 @@
                 android:gravity="center"
                 android:maxWidth="100dp"
                 android:singleLine="true"
+                android:text="@{event.isHomeTeam ? event.playerName : null}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/fixture_event_type_text_view"
                 app:layout_constraintStart_toEndOf="@+id/elapsed_time_text_view"
