@@ -1,21 +1,17 @@
 package com.example.ui.home.detail
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.di.net.NetworkResult
 import com.example.di.net.main.ApiExecutor
 import com.example.ui.model.FixtureEventItem
 import com.example.ui.model.LeagueFixturesItem
-import com.example.utils.Event
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -23,27 +19,28 @@ class FixtureDetailsViewModel @Inject constructor(
     private val apiExecutor: ApiExecutor
 ) : ViewModel() {
 
-    private val _headerDetailsLiveData = MutableLiveData<LeagueFixturesItem.Body>()
-    val headerDetailsLiveData: LiveData<LeagueFixturesItem.Body> get() = _headerDetailsLiveData
 
-    private val _fixtureEventsLiveData = MutableLiveData<List<FixtureEventItem>>()
-    val fixtureEventsLiveData: LiveData<List<FixtureEventItem>> get() = _fixtureEventsLiveData
+    private val _headerDetailsFlow = MutableStateFlow<LeagueFixturesItem.Body?>(null)
+    val headerDetailsFlow = _headerDetailsFlow.asStateFlow()
 
-    private val _loadingLiveData = MutableLiveData(false)
-    val loadingLiveData: LiveData<Boolean> get() = _loadingLiveData
+    private val _fixtureEventsFlow = MutableStateFlow<List<FixtureEventItem>?>(null)
+    val fixtureEventsFlow = _fixtureEventsFlow.asStateFlow()
 
-    private val _errorLiveData = MutableLiveData<Event<Throwable>>()
-    val errorLiveData: LiveData<Event<Throwable>> get() = _errorLiveData
+    private val _loadingFlow = MutableStateFlow(false)
+    val loadingFlow = _loadingFlow.asStateFlow()
 
-    private val _emptyEventsLiveData = MutableLiveData<Boolean>()
-    val emptyEventsLiveData: LiveData<Boolean> get() = _emptyEventsLiveData
+    private val _emptyEventsFlow = MutableStateFlow(true)
+    val emptyEventsFlow = _emptyEventsFlow.asStateFlow()
+
+    private val _errorFlow = MutableSharedFlow<Throwable>()
+    val errorFlow = _errorFlow.asSharedFlow()
 
     fun setInitialData(leagueFixtureItem: LeagueFixturesItem?) {
         if (leagueFixtureItem == null) return
 
         when (leagueFixtureItem) {
             is LeagueFixturesItem.Body -> {
-                _headerDetailsLiveData.value = leagueFixtureItem!!
+                _headerDetailsFlow.value = leagueFixtureItem!!
                 getFixtureEvents(leagueFixtureItem)
             }
             is LeagueFixturesItem.Header -> {
@@ -53,11 +50,9 @@ class FixtureDetailsViewModel @Inject constructor(
     }
 
     private fun getFixtureEvents(fixtureItem: LeagueFixturesItem.Body) {
-
         showLoading()
         viewModelScope.launch {
-            val eventResponse = apiExecutor.getFixtureEvent(fixtureItem.fixture.id)
-            when (eventResponse) {
+            when (val eventResponse = apiExecutor.getFixtureEvent(fixtureItem.fixture.id)) {
                 is NetworkResult.ApiSuccess -> {
 
                     val eventList = eventResponse.data.response
@@ -66,35 +61,24 @@ class FixtureDetailsViewModel @Inject constructor(
                         FixtureEventItem.create(it, fixtureItem.homeTeam.id, fixtureItem.awayTeam.id)
                     }
 
-                    _fixtureEventsLiveData.value = fixtureEventsList
-                    _emptyEventsLiveData.value = eventList.isEmpty()
+                    _fixtureEventsFlow.value = fixtureEventsList
+                    _emptyEventsFlow.value = eventList.isEmpty()
                     hideLoading()
                 }
 
                 is NetworkResult.ApiError -> {
-                    _errorLiveData.value = Event(eventResponse.throwable)
+                    _errorFlow.emit(eventResponse.throwable)
                     hideLoading()
-                }
-            }
-        }
-    }
-
-    private fun test() {
-        CoroutineScope(Job()).launch(Dispatchers.Main) {
-            withContext(Dispatchers.IO) {
-                for (value in 1..9) {
-
-                    ensureActive()
                 }
             }
         }
     }
 
     private fun showLoading() {
-        _loadingLiveData.value = true
+        _loadingFlow.value = true
     }
 
     private fun hideLoading() {
-        _loadingLiveData.value = false
+        _loadingFlow.value = false
     }
 }

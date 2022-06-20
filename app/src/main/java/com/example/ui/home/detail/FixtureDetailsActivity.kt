@@ -6,17 +6,16 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.activity.viewModels
-import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.DividerItemDecoration
-import com.example.binding.BindingAdapters.loadImage
 import com.example.livescoredemo.R
 import com.example.livescoredemo.databinding.ActivityFixtureDetailsBinding
 import com.example.ui.home.FixtureFragment
 import com.example.ui.home.adapter.FixtureEventsAdapter
 import com.example.ui.model.LeagueFixturesItem
+import com.example.utils.extensions.launchAndRepeatWithLifecycle
+import com.example.utils.extensions.launchAndRepeatWithLifecycleNotNull
 import com.example.utils.extensions.showErrorSnackBar
-import com.example.utils.observeEventNotNull
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -33,9 +32,8 @@ class FixtureDetailsActivity : AppCompatActivity() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_fixture_details)
 
         setInitial()
-        initToolbar()
         initAdapter()
-        initRecyclerView()
+        initViews()
         initViewModel()
     }
 
@@ -45,6 +43,13 @@ class FixtureDetailsActivity : AppCompatActivity() {
             return true
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun initViews() {
+        binding.lifecycleOwner = this
+        binding.viewmodel = viewModel
+        initToolbar()
+        initRecyclerView()
     }
 
     private fun setInitial() {
@@ -58,33 +63,12 @@ class FixtureDetailsActivity : AppCompatActivity() {
 
     private fun initViewModel() {
         with(viewModel) {
-
-            headerDetailsLiveData.observe(this@FixtureDetailsActivity) {
-                binding.teamHomeLogoImageView.loadImage(it.homeTeam.logo)
-                binding.teamAwayLogoImageView.loadImage(it.awayTeam.logo)
-                binding.scoreTextView.text = getString(R.string.score_label, it.goals.home ?: 0, it.goals.away ?: 0)
-                binding.fixtureStatusTextView.text = getString(it.fixture.status.type.message)
-            }
-
-            fixtureEventsLiveData.observe(this@FixtureDetailsActivity) {
+            launchAndRepeatWithLifecycleNotNull(fixtureEventsFlow) {
                 adapter.submitList(it)
             }
 
-            loadingLiveData.observe(this@FixtureDetailsActivity) {
-                binding.progressBar.isVisible = it
-            }
-
-            errorLiveData.observeEventNotNull(this@FixtureDetailsActivity) {
+            launchAndRepeatWithLifecycle(errorFlow) {
                 showErrorSnackBar(binding.root, it)
-            }
-
-            emptyEventsLiveData.observe(this@FixtureDetailsActivity) { isEmpty ->
-                val title = if (isEmpty) {
-                    getString(R.string.empty_fixture_events_message)
-                } else {
-                    getString(R.string.events)
-                }
-                binding.titleTextView.text = title
             }
         }
     }

@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout>
 
+    <data>
+
+        <variable
+            name="viewmodel"
+            type="com.example.ui.home.detail.FixtureDetailsViewModel" />
+    </data>
+
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
@@ -30,8 +37,10 @@
                 android:layout_width="70dp"
                 android:layout_height="70dp"
                 android:scaleType="fitCenter"
+                app:imageUrl="@{viewmodel.headerDetailsFlow.homeTeam.logo}"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
+                app:placeholder="@{@drawable/ic_defalut_flag}"
                 tools:ignore="ContentDescription"
                 tools:srcCompat="@tools:sample/backgrounds/scenic" />
 
@@ -40,9 +49,11 @@
                 android:layout_width="70dp"
                 android:layout_height="70dp"
                 android:scaleType="fitCenter"
+                app:imageUrl="@{viewmodel.headerDetailsFlow.awayTeam.logo}"
                 app:layout_constraintBottom_toBottomOf="@+id/team_home_logo_image_view"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/team_home_logo_image_view"
+                app:placeholder="@{@drawable/ic_defalut_flag}"
                 tools:ignore="ContentDescription"
                 tools:srcCompat="@tools:sample/backgrounds/scenic" />
 
@@ -51,6 +62,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="-20dp"
+                android:text="@{@string/score_label(viewmodel.headerDetailsFlow.goals.home,viewmodel.headerDetailsFlow.goals.away)}"
                 app:layout_constraintBottom_toBottomOf="@+id/team_away_logo_image_view"
                 app:layout_constraintEnd_toStartOf="@+id/team_away_logo_image_view"
                 app:layout_constraintStart_toEndOf="@+id/team_home_logo_image_view"
@@ -62,6 +74,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
+                android:text="@{viewmodel.headerDetailsFlow.status.type.message}"
                 app:layout_constraintEnd_toStartOf="@+id/team_away_logo_image_view"
                 app:layout_constraintStart_toEndOf="@+id/team_home_logo_image_view"
                 app:layout_constraintTop_toBottomOf="@+id/score_text_view"
@@ -76,8 +89,9 @@
             android:fontFamily="sans-serif"
             android:gravity="center"
             android:padding="15dp"
-            tools:text="@string/events"
-            android:textAppearance="@style/TextAppearance.AppCompat.Title" />
+            android:text="@{viewmodel.emptyEventsFlow?@string/empty_fixture_events_message:@string/events}"
+            android:textAppearance="@style/TextAppearance.AppCompat.Title"
+            tools:text="@string/events" />
 
         <FrameLayout
             android:layout_width="match_parent"
@@ -94,10 +108,10 @@
 
             <ProgressBar
                 android:id="@+id/progress_bar"
+                goneUnless="@{viewmodel.loadingFlow}"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:visibility="gone"
                 tools:visibility="visible" />
         </FrameLayout>
     </LinearLayout>

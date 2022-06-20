@@ -15,6 +15,7 @@ import com.example.livescoredemo.databinding.FragmentCustomFixtureBinding
 import com.example.ui.home.adapter.LeagueFixturesAdapter
 import com.example.ui.home.detail.FixtureDetailsActivity
 import com.example.utils.asString
+import com.example.utils.extensions.launchAndRepeatWithViewLifecycleNotNull
 import com.example.utils.extensions.toDate
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -43,16 +44,17 @@ class CustomFixtureFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        initViews()
         initAdapter()
-        initRecyclerView()
+        initViews()
 
-        viewModel.customFixturesLiveData.observe(viewLifecycleOwner) {
+        launchAndRepeatWithViewLifecycleNotNull(viewModel.customFixturesFlow) {
             adapter.submitList(it)
         }
     }
 
     private fun initViews() {
+        initRecyclerView()
+
         with(binding) {
             parentRelative.setOnClickListener {
                 if (calendarViewLayout.isVisible) {

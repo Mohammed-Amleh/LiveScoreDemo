@@ -1,7 +1,5 @@
 package com.example.ui.home
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.di.net.NetworkResult
@@ -11,12 +9,15 @@ import com.example.ui.home.adapter.PageType
 import com.example.ui.model.FixtureItem
 import com.example.ui.model.LeagueFixturesItem
 import com.example.utils.DateUtils
-import com.example.utils.Event
 import com.example.utils.asString
 import com.example.utils.extensions.toDate
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -25,17 +26,17 @@ class HomeViewModel @Inject constructor(
     private val apiExecutor: ApiExecutor
 ) : ViewModel() {
 
-    private val _fixturesLiveData = MutableLiveData<List<FixtureItem>>()
-    val fixturesLiveData: LiveData<List<FixtureItem>> get() = _fixturesLiveData
+    private val _fixturesFlow = MutableStateFlow<List<FixtureItem>?>(null)
+    val fixturesFlow = _fixturesFlow.asStateFlow()
 
-    private val _customFixturesLiveData = MutableLiveData<List<LeagueFixturesItem>>()
-    val customFixturesLiveData: LiveData<List<LeagueFixturesItem>> get() = _customFixturesLiveData
+    private val _customFixturesFlow = MutableStateFlow<List<LeagueFixturesItem>?>(null)
+    val customFixturesFlow = _customFixturesFlow.asStateFlow()
 
-    private val _loadingLiveData = MutableLiveData<Boolean>(false)
-    val loadingLiveData: LiveData<Boolean> get() = _loadingLiveData
+    private val _loadingFlow = MutableStateFlow(false)
+    val loadingFlow = _loadingFlow.asStateFlow()
 
-    private val _errorLiveData = MutableLiveData<Event<Throwable>>()
-    val errorLiveData: LiveData<Event<Throwable>> get() = _errorLiveData
+    private val _errorFlow = MutableSharedFlow<Throwable>()
+    val errorFlow = _errorFlow.asSharedFlow()
 
     init {
         getFixtures()
@@ -54,11 +55,11 @@ class HomeViewModel @Inject constructor(
 
                     fixturesItems.forEach { item -> data.addAll(item.data) }
 
-                    _customFixturesLiveData.value = data
+                    _customFixturesFlow.value = data
                     hideLoading()
                 }
                 is NetworkResult.ApiError -> {
-                    _errorLiveData.value = Event(fixturesResponse.throwable)
+                    _errorFlow.emit(fixturesResponse.throwable)
                     hideLoading()
                 }
             }
@@ -72,7 +73,6 @@ class HomeViewModel @Inject constructor(
             val yesterdayRequest = async { apiExecutor.getFixturesByDate(DateUtils.getYesterdayDate().asString()) }
             val tomorrowRequest = async { apiExecutor.getFixturesByDate(DateUtils.getTomorrowDate().asString()) }
 
-
             //if one of request's fail it will not affect other's
             val responsesResult = listOf(todayRequest, yesterdayRequest, tomorrowRequest).map { it.await() }
 
@@ -84,11 +84,11 @@ class HomeViewModel @Inject constructor(
                         result.addAll(it.data.response)
                     }
                     is NetworkResult.ApiError -> {
-                        _errorLiveData.value = Event(it.throwable)
+                        _errorFlow.emit(it.throwable)
                     }
                 }
             }
-            _fixturesLiveData.value = buildFixturesItems(result)
+            _fixturesFlow.value = buildFixturesItems(result)
             hideLoading()
         }
     }
@@ -132,11 +132,11 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun showLoading() {
-        _loadingLiveData.value = true
+        _loadingFlow.value = true
     }
 
     private fun hideLoading() {
-        _loadingLiveData.value = false
+        _loadingFlow.value = false
     }
 
     private fun executeLunch(callback: suspend CoroutineScope.() -> Unit) {
