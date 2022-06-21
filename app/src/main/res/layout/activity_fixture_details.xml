@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+
+    <data>
+
+        <variable
+            name="viewmodel"
+            type="com.example.ui.home.detail.FixtureDetailsViewModel" />
+    </data>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        tools:context="com.example.ui.home.detail.FixtureDetailsActivity">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/colorPrimary"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+            app:title="Details"
+            app:titleCentered="true" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/gray_0F"
+            android:padding="25dp">
+
+            <ImageView
+                android:id="@+id/team_home_logo_image_view"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:scaleType="fitCenter"
+                app:imageUrl="@{viewmodel.headerDetailsFlow.homeTeam.logo}"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:placeholder="@{@drawable/ic_defalut_flag}"
+                tools:ignore="ContentDescription"
+                tools:srcCompat="@tools:sample/backgrounds/scenic" />
+
+            <ImageView
+                android:id="@+id/team_away_logo_image_view"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:scaleType="fitCenter"
+                app:imageUrl="@{viewmodel.headerDetailsFlow.awayTeam.logo}"
+                app:layout_constraintBottom_toBottomOf="@+id/team_home_logo_image_view"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/team_home_logo_image_view"
+                app:placeholder="@{@drawable/ic_defalut_flag}"
+                tools:ignore="ContentDescription"
+                tools:srcCompat="@tools:sample/backgrounds/scenic" />
+
+            <TextView
+                android:id="@+id/score_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="-20dp"
+                android:text="@{@string/score_label(viewmodel.headerDetailsFlow.goals.home,viewmodel.headerDetailsFlow.goals.away)}"
+                app:layout_constraintBottom_toBottomOf="@+id/team_away_logo_image_view"
+                app:layout_constraintEnd_toStartOf="@+id/team_away_logo_image_view"
+                app:layout_constraintStart_toEndOf="@+id/team_home_logo_image_view"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="2-0" />
+
+            <TextView
+                android:id="@+id/fixture_status_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:text="@{viewmodel.headerDetailsFlow.status.type.message}"
+                app:layout_constraintEnd_toStartOf="@+id/team_away_logo_image_view"
+                app:layout_constraintStart_toEndOf="@+id/team_home_logo_image_view"
+                app:layout_constraintTop_toBottomOf="@+id/score_text_view"
+                tools:text="Full time" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <TextView
+            android:id="@+id/title_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif"
+            android:gravity="center"
+            android:padding="15dp"
+            android:text="@{viewmodel.emptyEventsFlow?@string/empty_fixture_events_message:@string/events}"
+            android:textAppearance="@style/TextAppearance.AppCompat.Title"
+            tools:text="@string/events" />
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/fixture_events_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:overScrollMode="never"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:listitem="@layout/list_item_fixture_event" />
+
+            <ProgressBar
+                android:id="@+id/progress_bar"
+                goneUnless="@{viewmodel.loadingFlow}"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                tools:visibility="visible" />
+        </FrameLayout>
+    </LinearLayout>
+</layout>

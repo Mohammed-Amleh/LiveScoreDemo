@@ -2,7 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.livescoredemo">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
+        android:name="com.example.context.LiveScoreApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -10,7 +13,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.LiveScoreDemo">
         <activity
-            android:name="com.example.ui.landing.MainActivity"
+            android:name="com.example.ui.home.detail.FixtureDetailsActivity"
+            android:exported="false" />
+        <activity
+            android:name="com.example.ui.home.HomeActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
