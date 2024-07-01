@@ -1,4 +1,4 @@
-package com.example.di.net.main.model
+package com.example.di.net.main.model.fixture
 
 
 import android.os.Parcelable

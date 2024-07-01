@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import com.example.livescoredemo.R
 import com.example.livescoredemo.databinding.FragmentCustomFixtureBinding
 import com.example.ui.home.adapter.LeagueFixturesAdapter
+import com.example.ui.home.detail.FixtureDetailsActivity
 import com.example.utils.asString
 import com.example.utils.extensions.toDate
 import dagger.hilt.android.AndroidEntryPoint
@@ -68,10 +69,9 @@ class CustomFixtureFragment : Fragment() {
             }
 
             calendarView.setOnDateChangeListener { _, year, month, dayOfMonth ->
-                val date = ("${year}-${month}-${dayOfMonth}")
-                    .toDate()?.asString()
+                val date = requireContext().getString(R.string.default_format_date_pattern, year, month, dayOfMonth)
 
-                date?.let { currentDate ->
+                date.toDate()?.asString()?.let { currentDate ->
                     binding.currentDateTextView.text = currentDate
                     viewModel.getFixturesByDate(currentDate)
                     hideCalendarView()
@@ -93,7 +93,9 @@ class CustomFixtureFragment : Fragment() {
     }
 
     private fun initAdapter() {
-        adapter = LeagueFixturesAdapter()
+        adapter = LeagueFixturesAdapter {
+            startActivity(FixtureDetailsActivity.newIntent(requireContext(), it))
+        }
     }
 
     private fun showCalendarView() {

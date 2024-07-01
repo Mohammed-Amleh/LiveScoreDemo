@@ -1,9 +1,9 @@
-package com.example.di.net.main.model
+package com.example.di.net.main.model.fixture
 
 
 import com.google.gson.annotations.SerializedName
 
-data class Fulltime(
+data class Halftime(
     val away: Int?,
     val home: Int?
 )

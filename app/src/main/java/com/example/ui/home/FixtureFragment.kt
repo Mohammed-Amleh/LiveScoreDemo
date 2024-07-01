@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import com.example.livescoredemo.R
 import com.example.livescoredemo.databinding.FragmentFixtureBinding
 import com.example.ui.home.adapter.LeagueFixturesAdapter
+import com.example.ui.home.detail.FixtureDetailsActivity
 import com.example.ui.model.LeagueFixturesItem
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -51,8 +52,11 @@ class FixtureFragment : Fragment() {
     }
 
     private fun initAdapter() {
-        adapter = LeagueFixturesAdapter()
+        adapter = LeagueFixturesAdapter { leagueFixtureItem ->
+            startActivity(FixtureDetailsActivity.newIntent(requireContext(), leagueFixtureItem))
+        }
     }
+
 
     private fun getLeagueFixturesList() =
         arguments?.getParcelableArrayList<LeagueFixturesItem>(EXTRA_LEAGUE_FIXTURES_LIST) as List<LeagueFixturesItem>

@@ -1,8 +1,11 @@
-package com.example.di.net.main.model
+package com.example.di.net.main.model.fixture
 
 
+import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
+import kotlinx.parcelize.Parcelize
 
+@Parcelize
 data class Fixture(
     @SerializedName("date")
     val date: String,
@@ -24,7 +27,4 @@ data class Fixture(
 
     @SerializedName("timezone")
     val timezone: String,
-
-    @SerializedName("venue")
-    val venue: Venue
-)
+):Parcelable

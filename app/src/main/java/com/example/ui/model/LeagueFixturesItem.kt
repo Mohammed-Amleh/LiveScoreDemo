@@ -1,11 +1,14 @@
 package com.example.ui.model
 
 import android.os.Parcelable
-import com.example.di.net.main.model.Away
-import com.example.di.net.main.model.FixtureResponse
-import com.example.di.net.main.model.Goals
-import com.example.di.net.main.model.Home
-import com.example.di.net.main.model.League
+import com.example.di.net.main.model.fixture.Away
+import com.example.di.net.main.model.fixture.Fixture
+import com.example.di.net.main.model.fixture.FixtureResponse
+import com.example.di.net.main.model.fixture.Goals
+import com.example.di.net.main.model.fixture.Home
+import com.example.di.net.main.model.fixture.League
+import com.example.di.net.main.model.fixture.Status
+import com.example.di.net.main.model.fixture.StatusType
 import kotlinx.parcelize.Parcelize
 
 sealed class LeagueFixturesItem : Parcelable {
@@ -20,11 +23,22 @@ sealed class LeagueFixturesItem : Parcelable {
 
     @Parcelize
     data class Body(
+        val fixture: Fixture,
         val awayTeam: Away,
         val homeTeam: Home,
-        val goals: Goals
+        val goals: Goals,
+        val status: Status
+
     ) : LeagueFixturesItem() {
-        val isMatchStarted get() = goals.away != null && goals.home != null
+        val isMatchLive
+            get() = when (status.type) {
+                StatusType.H1, StatusType.H2, StatusType.HT, StatusType.ET, StatusType.P, StatusType.BT -> {
+                    true
+                }
+                else -> {
+                    false
+                }
+            }
     }
 
     companion object {
@@ -40,9 +54,11 @@ sealed class LeagueFixturesItem : Parcelable {
 
         fun createBody(fixtureResponse: FixtureResponse): LeagueFixturesItem {
             return Body(
+                fixtureResponse.fixture,
                 fixtureResponse.teams.away,
                 fixtureResponse.teams.home,
-                fixtureResponse.goals
+                fixtureResponse.goals,
+                fixtureResponse.fixture.status
             )
         }
     }

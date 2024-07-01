@@ -22,7 +22,8 @@
             android:layout_height="80dp"
             android:layout_weight="1"
             android:scaleType="fitCenter"
-            android:src="@drawable/ic_baseline_calendar_month_24" />
+            android:src="@drawable/ic_baseline_calendar_month_24"
+            tools:ignore="ContentDescription" />
 
         <TextView
             android:id="@+id/league_name_text_view"

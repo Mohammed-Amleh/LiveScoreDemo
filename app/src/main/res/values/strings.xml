@@ -5,6 +5,31 @@
     <string name="tomorrow">tomorrow</string>
     <string name="live">Live</string>
     <string name="choose_date">choose Date</string>
-    <string name="wait_please">Wait Please...</string>
+    <string name="wait_please">Wait Please…</string>
     <string name="not_started_yet">Not Started yet</string>
+
+    <string name="time_to_be_defined">Time To Be Defined</string>
+    <string name="not_started">Not Started yet</string>
+    <string name="first_half_kick_off">First Half, Kick Off</string>
+    <string name="halftime">Halftime</string>
+    <string name="second_half_2nd_half_started">Second Half, 2nd Half Started</string>
+    <string name="extra_time">Extra Time</string>
+    <string name="penalty_in_progress">Penalty In Progress</string>
+    <string name="match_finished">Match Finished</string>
+    <string name="match_finished_after_extra_time">Match Finished After Extra Time</string>
+    <string name="match_finished_after_penalty">Match Finished After Penalty</string>
+    <string name="break_time_in_extra_time">Break Time (in Extra Time)</string>
+    <string name="match_suspended">Match Suspended</string>
+    <string name="match_interrupted">Match Interrupted</string>
+    <string name="match_postponed">Match Interrupted</string>
+    <string name="match_cancelled">Match Cancelled</string>
+    <string name="match_abandoned">Match Abandoned</string>
+    <string name="technical_loss">Technical Loss</string>
+    <string name="walkover">WalkOver</string>
+    <string name="in_progress">Match In Progress</string>
+    <string name="events">Events</string>
+    <string name="score_label">%d-%d</string>
+    <string name="elapsed_time_label">\'%d</string>
+    <string name="empty_fixture_events_message">There\'s no events now…</string>
+    <string name="default_format_date_pattern">%d-%d-%d</string>
 </resources>

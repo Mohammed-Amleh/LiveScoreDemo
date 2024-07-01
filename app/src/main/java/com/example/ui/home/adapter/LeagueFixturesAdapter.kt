@@ -2,7 +2,6 @@ package com.example.ui.home.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -10,7 +9,9 @@ import com.example.livescoredemo.databinding.ListItemFixtureHeaderBinding
 import com.example.livescoredemo.databinding.ListItemFixturesBinding
 import com.example.ui.model.LeagueFixturesItem
 
-class LeagueFixturesAdapter :
+class LeagueFixturesAdapter(
+    private val onClick: (LeagueFixturesItem) -> Unit
+) :
     ListAdapter<LeagueFixturesItem, RecyclerView.ViewHolder>(object : DiffUtil.ItemCallback<LeagueFixturesItem>() {
         override fun areItemsTheSame(oldItem: LeagueFixturesItem, newItem: LeagueFixturesItem): Boolean {
             return oldItem == newItem
@@ -37,7 +38,11 @@ class LeagueFixturesAdapter :
                     parent,
                     false
                 )
-            )
+            ) { index ->
+                if (index != RecyclerView.NO_POSITION) {
+                    onClick(getItem(index))
+                }
+            }
         }
     }
 
@@ -64,7 +69,6 @@ class LeagueFixturesAdapter :
         const val LEAGUE_HEADER_VIEW_TYPE = 1
         const val TEAM_BODY_VIEW_TYPE = 2
     }
-
 }
 
 internal class LeagueFixturesHeaderViewHolder(private val binding: ListItemFixtureHeaderBinding) :
@@ -75,11 +79,17 @@ internal class LeagueFixturesHeaderViewHolder(private val binding: ListItemFixtu
     }
 }
 
-internal class LeagueFixturesBodyViewHolder(private val binding: ListItemFixturesBinding) :
+internal class LeagueFixturesBodyViewHolder(private val binding: ListItemFixturesBinding, onClick: (Int) -> Unit) :
     RecyclerView.ViewHolder(binding.root) {
+
+    init {
+        binding.root.setOnClickListener {
+            onClick(adapterPosition)
+        }
+    }
 
     fun bind(item: LeagueFixturesItem.Body) {
         binding.team = item
-        binding.notStartedFixtureTextView.isVisible = !item.isMatchStarted
+        binding.fixtureStatusTextView.text = itemView.context.getString(item.status.type.message)
     }
 }

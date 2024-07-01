@@ -69,7 +69,7 @@ class HomeActivity : AppCompatActivity() {
         }
 
         viewModel.errorLiveData.observeEventNotNull(this) {
-            showErrorSnackBar(binding.viewpager, it)
+            showErrorSnackBar(binding.root, it)
         }
     }
 
@@ -80,7 +80,6 @@ class HomeActivity : AppCompatActivity() {
             currentItem = PageType.TODAY.position
             offscreenPageLimit = 5
         }
-
     }
 
     private fun initTabLayoutMediator(): TabLayoutMediator {

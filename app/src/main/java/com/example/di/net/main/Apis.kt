@@ -1,6 +1,7 @@
 package com.example.di.net.main
 
-import com.example.di.net.main.model.FixturesResponse
+import com.example.di.net.main.model.fixture.FixturesResponse
+import com.example.di.net.main.model.event.EventsResponse
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query
@@ -13,11 +14,8 @@ interface Apis {
         @Query("date") date: String
     ): Response<FixturesResponse>
 
-    // Get all available fixtures from between 2 dates
-    @GET("fixtures")
-    suspend fun getFixturesBetweenTwoDate(
-        @Query("season") season: String,
-        @Query("from") fromDate: String,
-        @Query("to") toDate: String
-    ): Response<FixturesResponse>
+    @GET("fixtures/events")
+    suspend fun getFixtureEvents(
+        @Query("fixture") fixtureId: String
+    ):Response<EventsResponse>
 }
